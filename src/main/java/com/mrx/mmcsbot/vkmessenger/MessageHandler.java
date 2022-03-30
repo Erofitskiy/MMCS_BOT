@@ -18,6 +18,9 @@ public class MessageHandler {
     private final VKMessenger postman;
     private final List<String> phrases;
 
+    boolean readyToWrite = false;
+    boolean someoneElseSchedule = false;
+
     public MessageHandler(){
         postman = new VKMessenger();
 

@@ -19,9 +19,6 @@ public class SQLiteDB {
         try {
             Class.forName("org.sqlite.JDBC");
             c = DriverManager.getConnection("jdbc:sqlite:UsersDB.sqlite");
-            System.out.println("Connected to DB");
-
-
         } catch (ClassNotFoundException | SQLException e) {
             System.out.println("Error: " + e.getMessage());
         }
@@ -121,7 +118,6 @@ public class SQLiteDB {
     public void CloseConnection(){
         try {
             c.close();
-            System.out.println("Disconnected from DB");
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -113,7 +113,7 @@ public class ScheduleManager {
         for(String str : list)
             lessonsToday += str;
         if(list.isEmpty()){
-            postman.sendMessage(lessonsToday + "У Вас нет пар по расписанию ", user.id, KeyboardHolder.getWelcomeKeyboard());
+            postman.sendMessage(lessonsToday + "У тебя нет пар по расписанию ", user.id, KeyboardHolder.getWelcomeKeyboard());
         }
         else
             postman.sendMessage(lessonsToday, user.id, KeyboardHolder.getWelcomeKeyboard());
