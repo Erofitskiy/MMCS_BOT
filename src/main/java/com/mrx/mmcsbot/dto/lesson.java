@@ -1,4 +1,4 @@
-package JSONClasses;
+package com.mrx.mmcsbot.dto;
 
 public class lesson {
     public int id;

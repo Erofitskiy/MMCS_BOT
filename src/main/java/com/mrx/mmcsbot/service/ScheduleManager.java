@@ -1,9 +1,11 @@
-package App;
+package com.mrx.mmcsbot.service;
 
-import JSONClasses.curricula;
-import JSONClasses.Group;
-import JSONClasses.lesson;
+import com.mrx.mmcsbot.VKManager;
+import com.mrx.mmcsbot.dto.Curricula;
+import com.mrx.mmcsbot.dto.Group;
+import com.mrx.mmcsbot.dto.lesson;
 import com.google.gson.Gson;
+import com.mrx.mmcsbot.model.User;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,7 +17,7 @@ import java.util.*;
 public class ScheduleManager {
     //private static String week = "lower";
 
-    static int Today(){
+    public static int Today(){
         Calendar calendar = new GregorianCalendar();
         Date date = calendar.getTime();
         String day = date.toString().substring(0,3);
@@ -86,7 +88,7 @@ public class ScheduleManager {
 
         Gson gson = new Gson();
         lesson[] lessonsDate = gson.fromJson(json1, lesson[].class);
-        curricula[] lessonsName = gson.fromJson(json2, curricula[].class);
+        Curricula[] lessonsName = gson.fromJson(json2, Curricula[].class);
 
         String lessonsToday = "Расписание на  " + whatIsTheDay(today) + ": \n";
 
@@ -94,7 +96,7 @@ public class ScheduleManager {
         LinkedList<String> list = new LinkedList<String>();
 
         for(lesson date : lessonsDate) {
-            for(curricula name : lessonsName) {
+            for(Curricula name : lessonsName) {
                 if (Character.getNumericValue((date.timeslot.charAt(1))) == today && name.lessonid == date.id) {
                     String typeOfWeek = date.timeslot.substring(21, 26);
                     if(typeOfWeek.equals("full)") || typeOfWeek.equals(week)){
@@ -137,7 +139,7 @@ public class ScheduleManager {
         return answer;
     }
 
-    static int whatIsTheDay(String str){
+    public static int whatIsTheDay(String str){
         switch (str) {
             case "пн":
                 return 0;

@@ -1,4 +1,4 @@
-package App;
+package com.mrx.mmcsbot;
 
 import com.vk.api.sdk.client.TransportClient;
 import com.vk.api.sdk.client.VkApiClient;
@@ -14,14 +14,14 @@ import java.util.List;
 import java.util.Properties;
 
 public class VKCore {
-    private VkApiClient vk;
+    private VkApiClient vkApiClient;
     private static int ts;
-    private GroupActor actor;
+    private GroupActor groupActor;
     private static int maxMsgId = -1;
 
     public VKCore() throws ClientException, ApiException {
         TransportClient transportClient = HttpTransportClient.getInstance();
-        vk = new VkApiClient(transportClient);
+        vkApiClient = new VkApiClient(transportClient);
 
         Properties prop = new Properties();
         try {
@@ -29,27 +29,28 @@ public class VKCore {
             prop.load(inputStream);
             int groupId = Integer.parseInt(prop.getProperty("groupId"));
             String access_token = prop.getProperty("accessToken");
-            actor = new GroupActor(groupId, access_token);
+            groupActor = new GroupActor(groupId, access_token);
 
             //vk.groups().setLongPollSettings(actor, actor.getGroupId()).enabled(true).messageAllow(true).messageNew(true).wallPostNew(true);
 
-            ts = vk.messages().getLongPollServer(actor).execute().getTs();
+            ts = vkApiClient.messages().getLongPollServer(groupActor).execute().getTs();
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Ошибка при загрузке файла конфигурации");
         }
     }
 
-    public GroupActor getActor() {
-        return actor;
+    public GroupActor getGroupActor() {
+        return groupActor;
     }
-    public VkApiClient getVk() {
-        return vk;
-    }
-    public Message getMessage() throws ClientException, ApiException {
 
-        MessagesGetLongPollHistoryQuery eventsQuery = vk.messages()
-                .getLongPollHistory(actor)
+    public VkApiClient getVkApiClient() {
+        return vkApiClient;
+    }
+
+    public Message getMessage() throws ClientException, ApiException {
+        MessagesGetLongPollHistoryQuery eventsQuery = vkApiClient.messages()
+                .getLongPollHistory(groupActor)
                 .ts(ts);
         if (maxMsgId > 0){
             eventsQuery.maxMsgId(maxMsgId);
@@ -61,8 +62,8 @@ public class VKCore {
 
         if (!messages.isEmpty()){
             try {
-                ts =  vk.messages()
-                        .getLongPollServer(actor)
+                ts =  vkApiClient.messages()
+                        .getLongPollServer(groupActor)
                         .execute()
                         .getTs();
             } catch (ClientException e) {

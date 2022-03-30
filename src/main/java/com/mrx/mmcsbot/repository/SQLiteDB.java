@@ -1,6 +1,7 @@
-package App;
-import JSONClasses.VKUser;
+package com.mrx.mmcsbot.repository;
+import com.mrx.mmcsbot.dto.VKUser;
 import com.google.gson.Gson;
+import com.mrx.mmcsbot.model.User;
 import com.vk.api.sdk.objects.messages.Message;
 
 import java.io.FileInputStream;
@@ -8,7 +9,7 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.Properties;
 
-import static App.ScheduleManager.GetRequest;
+import static com.mrx.mmcsbot.service.ScheduleManager.GetRequest;
 
 public class SQLiteDB {
     private Connection c = null;
@@ -41,7 +42,7 @@ public class SQLiteDB {
         }
     }
 
-    void CreateUser(Message message){
+    public void CreateUser(Message message){
         try {
             String text = message.getText();
             Properties prop = new Properties();
@@ -75,7 +76,7 @@ public class SQLiteDB {
         }
     }
 
-    User GetUser(int id){
+    public User GetUser(int id){
         int course = 0;
         int group = 0;
         try{
@@ -91,7 +92,7 @@ public class SQLiteDB {
         return new User(id, course, group);
     }
 
-    void UpdateUser(int id, int course, int group){
+    public void UpdateUser(int id, int course, int group){
         try {
             String request = "UPDATE vkusers \n" +
                     "SET mcourse = " + course + ", mgroup = " + group + "\n" +
@@ -103,7 +104,7 @@ public class SQLiteDB {
         }
     }
 
-    boolean UserExists(int id){
+    public boolean UserExists(int id){
         boolean result = false;
         try {
             String request= "select * from vkusers where vkid=" + id ;
@@ -117,7 +118,7 @@ public class SQLiteDB {
         return result;
     }
 
-    void CloseConnection(){
+    public void CloseConnection(){
         try {
             c.close();
             System.out.println("Disconnected from DB");

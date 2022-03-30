@@ -1,14 +1,18 @@
-package App;
+package com.mrx.mmcsbot;
 
+import com.mrx.mmcsbot.model.User;
+import com.mrx.mmcsbot.repository.SQLiteDB;
+import com.mrx.mmcsbot.service.ScheduleManager;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.objects.messages.Message;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
-import static App.ScheduleManager.Today;
-import static App.ScheduleManager.whatIsTheDay;
+import static com.mrx.mmcsbot.service.ScheduleManager.Today;
+import static com.mrx.mmcsbot.service.ScheduleManager.whatIsTheDay;
 
 
 public class VKServer {
@@ -27,7 +31,7 @@ public class VKServer {
         boolean readyToWrite = false;
         boolean someoneElseSchedule = false;
         VKManager postman = new VKManager();
-        LinkedList<String> phrases = new LinkedList<String>();
+        List<String> phrases = new ArrayList<>();
         phrases.add("Моя твоя не понимать((");
         phrases.add("Походу я баг нашел");
         phrases.add("$#3%#^%$4$%&*^4@!+");
@@ -115,8 +119,6 @@ public class VKServer {
                     }
                     case "ЧужоеРасписание":
                     case "чужоеРасписание": {
-                        String text1 = "Введите курс и группу в формате: КУРС.ГРУППА \n" +
-                                "Например: 3.1 ";
                         postman.sendMessage("Введите курс и группу в формате: КУРС.ГРУППА \n Например: 3.1 ", userId);
                         someoneElseSchedule = true;
                         break;

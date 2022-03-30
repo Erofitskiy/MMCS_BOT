@@ -1,6 +1,6 @@
-package JSONClasses;
+package com.mrx.mmcsbot.dto;
 
-public class curricula {
+public class Curricula {
     public int id;
     public int lessonid;
     public int subnum;

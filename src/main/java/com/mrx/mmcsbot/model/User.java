@@ -1,17 +1,19 @@
-package App;
+package com.mrx.mmcsbot.model;
+
+import com.mrx.mmcsbot.VKManager;
 
 public class User {
     public int course;
     public int group;
     public int id;
 
-    User(int id, int course, int group){
+    public User(int id, int course, int group){
         this.course = course;
         this.group = group;
         this.id = id;
     }
 
-    User(int id, String data){
+    public User(int id, String data){
         this.id = id;
 
         try{

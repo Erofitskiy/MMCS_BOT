@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
-Main-Class: App.VKServer
+Main-Class: com.mrx.mmcsbot.VKServer
 

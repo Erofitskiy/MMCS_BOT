@@ -27,7 +27,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>App.VKServer</mainClass>
+                            <mainClass>com.mrx.mmcsbot.VKServer</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
