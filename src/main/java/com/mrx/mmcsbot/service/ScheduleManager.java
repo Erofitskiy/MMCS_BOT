@@ -1,11 +1,12 @@
 package com.mrx.mmcsbot.service;
 
-import com.mrx.mmcsbot.VKManager;
 import com.mrx.mmcsbot.dto.Curricula;
 import com.mrx.mmcsbot.dto.Group;
 import com.mrx.mmcsbot.dto.lesson;
 import com.google.gson.Gson;
+import com.mrx.mmcsbot.keyboard.KeyboardHolder;
 import com.mrx.mmcsbot.model.User;
+import com.mrx.mmcsbot.vkmessenger.VKMessenger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -67,14 +68,14 @@ public class ScheduleManager {
     }
 
     public static void getSchedule(User user, int today, String week){
-        VKManager postman = new VKManager();
+        VKMessenger postman = new VKMessenger();
         if(user.course == 0 || user.group == 0){
-            postman.sendMessage("Я Вас не знаю((( Нажмите \"Начать\"", user.id);
+            postman.sendMessage("Я Вас не знаю((( Нажмите \"Начать\"", user.id, KeyboardHolder.getWelcomeKeyboard());
             return;
         }
         String jsonString = GetRequest("http://schedule.sfedu.ru/APIv1/schedule/group/" + whatIsMagicNumber(user));
         if(jsonString.equals("")){
-            postman.sendMessage("Произошла ошибка", user.id);
+            postman.sendMessage("Произошла ошибка", user.id, KeyboardHolder.getWelcomeKeyboard());
             return;
         }
 
@@ -93,7 +94,7 @@ public class ScheduleManager {
         String lessonsToday = "Расписание на  " + whatIsTheDay(today) + ": \n";
 
 
-        LinkedList<String> list = new LinkedList<String>();
+        List<String> list = new ArrayList<>();
 
         for(lesson date : lessonsDate) {
             for(Curricula name : lessonsName) {
@@ -112,31 +113,30 @@ public class ScheduleManager {
         for(String str : list)
             lessonsToday += str;
         if(list.isEmpty()){
-            postman.sendMessage(lessonsToday + "У Вас нет пар по расписанию ", user.id);
+            postman.sendMessage(lessonsToday + "У Вас нет пар по расписанию ", user.id, KeyboardHolder.getWelcomeKeyboard());
         }
         else
-            postman.sendMessage(lessonsToday, user.id);
+            postman.sendMessage(lessonsToday, user.id, KeyboardHolder.getWelcomeKeyboard());
     }
 
     private static String whatIsTheDay(int day){
-        String answer = "";
         switch (day) {
             case 0:
-                answer = "понедельник"; break;
+                return "понедельник";
             case 1:
-                answer = "вторник"; break;
+                return "вторник";
             case 2:
-                answer = "среду"; break;
+                return "среду";
             case 3:
-                answer = "четверг"; break;
+                return "четверг";
             case 4:
-                answer = "пятницу"; break;
+                return "пятницу";
             case 5:
-                answer = "субботу"; break;
+                return "субботу";
             case 6:
-                answer = "воскресенье"; break;
+                return "воскресенье";
         }
-        return answer;
+        return "";
     }
 
     public static int whatIsTheDay(String str){

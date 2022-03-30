@@ -1,6 +1,7 @@
 package com.mrx.mmcsbot.model;
 
-import com.mrx.mmcsbot.VKManager;
+import com.mrx.mmcsbot.keyboard.KeyboardHolder;
+import com.mrx.mmcsbot.vkmessenger.VKMessenger;
 
 public class User {
     public int course;
@@ -32,8 +33,8 @@ public class User {
                 this.group = d2*10 + Integer.parseInt(String.valueOf(data.charAt(3)));
             }
         }catch(NumberFormatException e){
-            VKManager postman = new VKManager();
-            postman.sendMessage("Некорректные данные. Начните сначала.", id);
+            VKMessenger postman = new VKMessenger();
+            postman.sendMessage("Некорректные данные. Начните сначала.", id, KeyboardHolder.getWorkKeyboard());
         }
 
     }
