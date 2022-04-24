@@ -1,5 +1,6 @@
 package com.mrx.mmcsbot;
 
+import com.mrx.mmcsbot.bots.ScheduleBot;
 import com.mrx.mmcsbot.vkmessenger.MessageHandler;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
@@ -13,28 +14,15 @@ public class Application {
 
     public static void main(String[] args) throws InterruptedException, ClientException, ApiException {
         logger.info("Running server...");
+        ScheduleBot scheduleBot = new ScheduleBot();
 
-        MessageHandler messageHandler = new MessageHandler();
-        VKCore vkCore = new VKCore();
 
-        while (true) {
-            Thread.sleep(300); // запрос каждые 0.3 сек
-            try {
-                Message message = vkCore.getMessage();
-                if (message != null) {
-                    logger.info("[" + message.getFromId() + "] От пользователя <<" + message.getText() + ">>");
-                    messageHandler.handle(message);
-                }
-            } catch (ClientException e) {
-                System.out.println("Возникли проблемы");
-                System.out.println("Повторное соединение через " + RECONNECT_TIME / 1000 + " секунд");
-                System.out.println(e.getMessage());
-                e.printStackTrace();
-                Thread.sleep(RECONNECT_TIME);
-            } catch (ApiException e) {
-                e.printStackTrace();
-            }
-        }
+        Thread t1 = new Thread(scheduleBot, "Бот-расписание");
+
+        t1.start();
+        t1.join();
+
+
     }
 
 

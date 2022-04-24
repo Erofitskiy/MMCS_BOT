@@ -2,16 +2,33 @@ package com.mrx.mmcsbot.model;
 
 import com.mrx.mmcsbot.keyboard.KeyboardHolder;
 import com.mrx.mmcsbot.vkmessenger.VKMessenger;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
+
+@Getter
+@Setter
+@ToString
 public class User {
-    public int course;
-    public int group;
-    public int id;
+    private int course;
+    private int group;
+    private int id;
+    private int morning;
+    private int evening;
 
     public User(int id, int course, int group){
         this.course = course;
         this.group = group;
         this.id = id;
+    }
+
+    public User(int course, int group, int id, int morning, int evening) {
+        this.course = course;
+        this.group = group;
+        this.id = id;
+        this.morning = morning;
+        this.evening = evening;
     }
 
     public User(int id, String data){

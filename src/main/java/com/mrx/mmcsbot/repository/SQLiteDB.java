@@ -7,6 +7,8 @@ import com.vk.api.sdk.objects.messages.Message;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import static com.mrx.mmcsbot.service.ScheduleManager.GetRequest;
@@ -18,7 +20,7 @@ public class SQLiteDB {
     public SQLiteDB(){
         try {
             Class.forName("org.sqlite.JDBC");
-            c = DriverManager.getConnection("jdbc:sqlite:UsersDB.sqlite");
+            c = DriverManager.getConnection("jdbc:sqlite:Database.sqlite");
         } catch (ClassNotFoundException | SQLException e) {
             System.out.println("Error: " + e.getMessage());
         }
@@ -37,6 +39,25 @@ public class SQLiteDB {
         } catch (SQLException e) {
             System.out.println("Error: " + e.getMessage());
         }
+    }
+
+    public List<User> getIdsMorning(){
+        List<User> result = new ArrayList<>();
+        try {
+            this.stmt = c.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM vkusers WHERE morning > 0");
+            while (rs.next()){
+                int id = rs.getInt("vkid");
+                int course = rs.getInt("mcourse");
+                int group = rs.getInt("mgroup");
+                int morning = rs.getInt("morning");
+                int evening = rs.getInt("evening");
+                result.add(new User(course, group, id, morning, evening));
+            }
+        } catch (SQLException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        return result;
     }
 
     public void CreateUser(Message message){

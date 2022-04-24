@@ -1,13 +1,13 @@
 package com.mrx.mmcsbot.dto;
 
-public class lesson {
+public class Lesson {
     public int id;
     public int uberid;
     public int subcount;
     public String timeslot;
 
 
-    public lesson(int id, int uberid, int subcount, String timeslot){
+    public Lesson(int id, int uberid, int subcount, String timeslot){
         this.id = id;
         this.uberid = uberid;
         this.subcount = subcount;

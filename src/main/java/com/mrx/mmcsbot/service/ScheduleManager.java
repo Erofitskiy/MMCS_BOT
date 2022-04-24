@@ -2,7 +2,7 @@ package com.mrx.mmcsbot.service;
 
 import com.mrx.mmcsbot.dto.Curricula;
 import com.mrx.mmcsbot.dto.Group;
-import com.mrx.mmcsbot.dto.lesson;
+import com.mrx.mmcsbot.dto.Lesson;
 import com.google.gson.Gson;
 import com.mrx.mmcsbot.keyboard.KeyboardHolder;
 import com.mrx.mmcsbot.model.User;
@@ -44,8 +44,7 @@ public class ScheduleManager {
             conn.setRequestProperty("Accept", "application/json");
 
             if (conn.getResponseCode() != 200) {
-                throw new RuntimeException("Failed : HTTP error code : "
-                        + conn.getResponseCode());
+                throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode());
             }
 
             BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
@@ -58,24 +57,84 @@ public class ScheduleManager {
     }
 
     private static int whatIsMagicNumber(User user){
-        String json = GetRequest("http://schedule.sfedu.ru/APIv1/group/forGrade/" + user.course);
+        String json = GetRequest("http://schedule.sfedu.ru/APIv1/group/forGrade/" + user.getCourse());
         Gson gson = new Gson();
         Group[] groups = gson.fromJson(json, Group[].class);
         for(Group group : groups)
-            if (group.num == user.group)
+            if (group.num == user.getGroup())
                 return group.id;
         return 0;
     }
 
+
+
+    public static String getSchedule1(User user, int day, String week){
+        VKMessenger postman = new VKMessenger();
+        if(user.getCourse() == 0 || user.getGroup() == 0){
+            postman.sendMessage("Я Вас не знаю((( Нажмите \"Начать\"", user.getId(), KeyboardHolder.getWelcomeKeyboard());
+            return "Я Вас не знаю((( Нажмите \"Начать\"";
+        }
+        String jsonString = GetRequest("http://schedule.sfedu.ru/APIv1/schedule/group/" + whatIsMagicNumber(user));
+        if(jsonString.equals("")){
+            postman.sendMessage("Произошла ошибка", user.getId(), KeyboardHolder.getWelcomeKeyboard());
+            return "Произошла ошибка";
+        }
+
+        String[] JJson = jsonString.split(",\"c");
+        String json1 = JJson[0];
+        String json2 = JJson[1];
+
+        json1 = json1.replaceFirst("\\{\"lessons\":\\[", "\\[");
+        json2 = json2.replaceFirst("urricula\":\\[", "\\[");
+        json2 = json2.substring(0, json2.length() - 1);
+
+        Gson gson = new Gson();
+        Lesson[] lessonsDate = gson.fromJson(json1, Lesson[].class);
+        Curricula[] lessonsName = gson.fromJson(json2, Curricula[].class);
+
+        String lessonsToday = "Расписание на  " + whatIsTheDay(day) + ": \n";
+        List<String> list = new ArrayList<>();
+
+        for(Lesson date : lessonsDate) {
+            for(Curricula name : lessonsName) {
+                if (Character.getNumericValue((date.timeslot.charAt(1))) == day && name.lessonid == date.id) {
+                    String typeOfWeek = date.timeslot.substring(21, 26);
+                    if(typeOfWeek.equals("full)") || typeOfWeek.equals(week)){
+                        String time = date.timeslot.substring(3,17)
+                                .replaceFirst(":00", "")
+                                .replace(",", "-");
+                        list.add(time + " ауд. " + name.roomname + " " + name.subjectabbr +   "\n");
+                    }
+                }
+            }
+        }
+        java.util.Collections.sort(list);
+        for(String str : list)
+            lessonsToday += str;
+
+        if (list.isEmpty())
+            return lessonsToday + "У тебя нет пар по расписанию ";
+        else
+            return lessonsToday;
+    }
+
+
+
+
+
+
+
+
+
     public static void getSchedule(User user, int today, String week){
         VKMessenger postman = new VKMessenger();
-        if(user.course == 0 || user.group == 0){
-            postman.sendMessage("Я Вас не знаю((( Нажмите \"Начать\"", user.id, KeyboardHolder.getWelcomeKeyboard());
+        if(user.getCourse() == 0 || user.getGroup() == 0){
+            postman.sendMessage("Я Вас не знаю((( Нажмите \"Начать\"", user.getId(), KeyboardHolder.getWelcomeKeyboard());
             return;
         }
         String jsonString = GetRequest("http://schedule.sfedu.ru/APIv1/schedule/group/" + whatIsMagicNumber(user));
         if(jsonString.equals("")){
-            postman.sendMessage("Произошла ошибка", user.id, KeyboardHolder.getWelcomeKeyboard());
+            postman.sendMessage("Произошла ошибка", user.getId(), KeyboardHolder.getWelcomeKeyboard());
             return;
         }
 
@@ -88,7 +147,7 @@ public class ScheduleManager {
         json2 = json2.substring(0, json2.length() - 1);
 
         Gson gson = new Gson();
-        lesson[] lessonsDate = gson.fromJson(json1, lesson[].class);
+        Lesson[] lessonsDate = gson.fromJson(json1, Lesson[].class);
         Curricula[] lessonsName = gson.fromJson(json2, Curricula[].class);
 
         String lessonsToday = "Расписание на  " + whatIsTheDay(today) + ": \n";
@@ -96,7 +155,7 @@ public class ScheduleManager {
 
         List<String> list = new ArrayList<>();
 
-        for(lesson date : lessonsDate) {
+        for(Lesson date : lessonsDate) {
             for(Curricula name : lessonsName) {
                 if (Character.getNumericValue((date.timeslot.charAt(1))) == today && name.lessonid == date.id) {
                     String typeOfWeek = date.timeslot.substring(21, 26);
@@ -113,10 +172,10 @@ public class ScheduleManager {
         for(String str : list)
             lessonsToday += str;
         if(list.isEmpty()){
-            postman.sendMessage(lessonsToday + "У тебя нет пар по расписанию ", user.id, KeyboardHolder.getWelcomeKeyboard());
+            postman.sendMessage(lessonsToday + "У тебя нет пар по расписанию ", user.getId(), KeyboardHolder.getWelcomeKeyboard());
         }
         else
-            postman.sendMessage(lessonsToday, user.id, KeyboardHolder.getWelcomeKeyboard());
+            postman.sendMessage(lessonsToday, user.getId(), KeyboardHolder.getWelcomeKeyboard());
     }
 
     private static String whatIsTheDay(int day){
